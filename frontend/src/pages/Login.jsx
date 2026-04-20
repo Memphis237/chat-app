@@ -9,7 +9,7 @@ export function Login(){
     const [confirmPassword, setConfirmPassword] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState();
+    const [phone, setPhone] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
