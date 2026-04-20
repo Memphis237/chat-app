@@ -1,4 +1,6 @@
 import React, {useState} from "react";
+import { loginUser, registerUser } from "../services/AuthServices";
+import { useNavigate } from "react-router-dom";
 
 
 export function Login(){
@@ -9,19 +11,38 @@ export function Login(){
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState();
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState("");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const sendForm = (e) =>{
+    const sendForm = async(e) =>{
         e.preventDefault();
+        setError("");
 
-        if(password !== confirmPassword){
-            setConfirmPassword("Les mots de passes ne correspondent pas !");
-            return;
-        }
         if(password.length < 8){
             setError("Le mot de passe doit contenir aumoins 8 caractères !");
             return;
         }
+
+        try{
+            setLoading(true);
+
+            if(isLogin){
+                const res = await loginUser({name, password});
+                localStorage.setItem("token", res.data.token);
+                navigate("/Home");
+            }else{
+                if(password !== confirmPassword){
+                    setConfirmPassword("Les mots de passes ne correspondent pas !");
+                }
+
+                await registerUser({name, email, password, phone});
+                setIsLogin(true);
+            }
+        }catch(err){
+            setError(err.response?.data?.message || "Une erreur est survenue");
+        }finally{
+            setLoading(false);
+        }    
     }
     
 
@@ -66,7 +87,7 @@ export function Login(){
                 }
             </div>
 
-            <button type="submit" className="bg-[#00A63E] text-white text-xl px-10 py-2 rounded-xl mt-6 mb-8 w-[350px]">{isLogin ? "Se connecter" : "S'inscrire"}</button>
+            <button type="submit" disabled={loading} className="bg-[#00A63E] text-white text-xl px-10 py-2 rounded-xl mt-6 mb-8 w-[350px]">{isLogin ? "Se connecter" : "S'inscrire"}</button>
 
             <div className="flex items-center">
                 <div className="border-t mb-5 mr-2 w-20 border-gray-600"></div>
