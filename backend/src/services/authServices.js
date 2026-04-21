@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { findUserByName, createUser } from '../models/authModels';
+import { findUserByName, createUser } from '../models/authModels.js';
 import jwt from 'jsonwebtoken';
 
 export const registerService = async(data)=>{
