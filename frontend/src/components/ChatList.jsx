@@ -5,12 +5,12 @@ import {socket} from '../services/socket';
 export function ChatList({chats, setChats, onSelectChat, currentChatId}){
 
     useEffect(()=>{
-            socket.on("update-chat-list", (msg)=>{
+        const handleUpdateChatList = (msg) => {
             setChats(prev =>{
-            return prev.map(chat =>{
+                return prev.map(chat =>{
                     const isMatch = chat.id_groups === msg.group_id ||
                                     chat.id_users === msg.sender_id ||
-                                    chat.id_users === msg.receiver.id;
+                                    chat.id_users === msg.receiver?.id;
                     if(isMatch){
                         return {
                             ...chat,
@@ -22,8 +22,13 @@ export function ChatList({chats, setChats, onSelectChat, currentChatId}){
                     return chat;
                 });
             });
-        });
-    return socket.off("update-chat-list");
+        };
+
+        socket.on("update-chat-list", handleUpdateChatList);
+
+        return () => {
+            socket.off("update-chat-list", handleUpdateChatList);
+        };
 
     }, [setChats, currentChatId]);
     
@@ -33,6 +38,7 @@ export function ChatList({chats, setChats, onSelectChat, currentChatId}){
                 const chatId = chat.id_groups || chat.id_users;
                 const isActive = currentChatId === chatId;
 
+                return (
                 <div key={chatId} onClick={()=>{
                     onSelectChat(chat);
                     setChats(prev => prev.map(c =>(c.id_groups === chatId || c.id_users === chatId) ? {...c, unread: 0} : c))
@@ -48,6 +54,7 @@ export function ChatList({chats, setChats, onSelectChat, currentChatId}){
                     }
 
                 </div>
+                );
             })}
         </div>
     </>

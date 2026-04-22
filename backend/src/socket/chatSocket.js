@@ -1,3 +1,5 @@
+import { createMessage } from "../controllers/messageControllers.js";
+
 const onlineUsers = new Map();
 
 export default (io)=>{
@@ -13,11 +15,11 @@ export default (io)=>{
 
         //gestion des users qui écrit
         socket.on("typing", (data)=>{
-            io.broadcast.emit("typing", data);
+            socket.broadcast.emit("typing", data);
         });
 
         socket.on("stop-typing", (data)=>{
-            io.broadcast.emit("stop-typing", data);
+            socket.broadcast.emit("stop-typing", data);
         });
 
         //message envoyer

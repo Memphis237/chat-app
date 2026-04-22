@@ -9,31 +9,43 @@ export function ChatWindow({activeChat, user}){
     const [typingUser, setTypingUser] = useState(null);
 
     useEffect(()=>{
-        socket.on("new-message", (msg)=>{
+        const handleNewMessage = (msg) => {
             setMessages(prev =>[...prev, msg]);
 
             socket.emit("message-delivered", {
                 messageId: msg.id_messages
             });
-        });
+        };
 
-        socket.on("message-status", (data)=>{
-            setMessages(prev =>prev.map(m => m.id_messages === data.messageId ? {...m, status: data.status} : m ))
-        });
+        const handleMessageStatus = (data) => {
+            setMessages(prev =>prev.map(m => m.id_messages === data.messageId ? {...m, status: data.status} : m ));
+        };
 
-        socket.on("typing", (data)=>{
+        const handleTyping = (data) => {
             setTypingUser(data.user);
-        });
-        socket.on("stop-typing", ()=>{
-            setTypingUser(null);
-        })
+        };
 
+        const handleStopTyping = () => {
+            setTypingUser(null);
+        };
+
+        socket.on("new-message", handleNewMessage);
+        socket.on("message-status", handleMessageStatus);
+        socket.on("typing", handleTyping);
+        socket.on("stop-typing", handleStopTyping);
+
+        return () => {
+            socket.off("new-message", handleNewMessage);
+            socket.off("message-status", handleMessageStatus);
+            socket.off("typing", handleTyping);
+            socket.off("stop-typing", handleStopTyping);
+        };
 
     }, [])
 
     useEffect(()=>{
         if(activeChat){
-            socket.on("message-read", {
+            socket.emit("message-read", {
                 conversationId: activeChat.id_groups || activeChat.id_users
             });
         }
@@ -44,7 +56,7 @@ export function ChatWindow({activeChat, user}){
             {messages.map(msg =>(
                 <div key={msg.id_messages}>
                     <p>{msg.messages}</p>
-                    {msg.sender_id === user.id_users && (
+                    {user && msg.sender_id === user.id_users && (
                         <span>
                             <span>{msg.timestamp}</span>
                             {msg.status === "sent" && "✓"}
@@ -61,7 +73,7 @@ export function ChatWindow({activeChat, user}){
                     {typingUser} est entrain d'écrit....
                 </div>
             )}
-            <ChatInput/>
+            <ChatInput activeChat={activeChat} user={user}/>
         </div>
     </>
     
