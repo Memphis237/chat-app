@@ -11,10 +11,10 @@ export const findUserByName = (name)=>{
 }
 
 export const createUser = (user)=>{
-    const {name, email, password, phone} = user;
+    const {name, email, password, phone, avatar = null} = user;
     return new Promise((resolve, reject)=>{
-        const sql = "INSERT INTO users (username, email, password, telephone) VALUES (?, ?, ?, ?)";
-        db.query(sql, [name, email, password, phone], (err, result)=>{
+        const sql = "INSERT INTO users (username, email, password, telephone, avatar) VALUES (?, ?, ?, ?, ?)";
+        db.query(sql, [name, email, password, phone, avatar], (err, result)=>{
             if(err) reject(err);
             else resolve(result)
         });

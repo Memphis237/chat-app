@@ -12,12 +12,14 @@ const io = new Server(server,{
     cors:{
         origin: process.env.HOST,
         methods: ["GET", "POST"]
-    }
+    },
+    maxHttpBufferSize: 300 * 1024 * 1024
 }
 );
 
 //injection de l'instance io
 socketHandler(io);
+app.set("io", io);
 
 const PORT = process.env.PORT || 5000;
 

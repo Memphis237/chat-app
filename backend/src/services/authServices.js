@@ -39,8 +39,11 @@ export const loginService = async(data)=>{
         token,
         user:{
             id: user.id_users,
+            id_users: user.id_users,
             name: user.username,
-            email: user.email
+            username: user.username,
+            email: user.email,
+            avatar: user.avatar
         }
     };
 }
