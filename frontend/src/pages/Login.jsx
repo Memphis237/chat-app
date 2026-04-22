@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import { loginUser, registerUser } from "../services/AuthServices";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 
 export function Login(){
@@ -13,6 +14,7 @@ export function Login(){
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
 
     const sendForm = async(e) =>{
         e.preventDefault();
@@ -27,15 +29,29 @@ export function Login(){
             setLoading(true);
 
             if(isLogin){
+                if(!name || !password){
+                    setError("Veuillez remplir tous les champs !");
+                    return;
+                }
                 const res = await loginUser({name, password});
-                localStorage.setItem("token", res.data.token);
+                login(res);
                 navigate("/Home");
             }else{
+                if(!name || !email || !password || !phone){
+                    setError("Veuillez remplir tous les champs !");
+                    return;
+                }
                 if(password !== confirmPassword){
-                    setConfirmPassword("Les mots de passes ne correspondent pas !");
+                    setError("Les mots de passes ne correspondent pas !");
+                    return;
                 }
 
                 await registerUser({name, email, password, phone});
+                setError("");
+                setPassword("");
+                setConfirmPassword("");
+                setEmail("");
+                setPhone("");
                 setIsLogin(true);
             }
         }catch(err){

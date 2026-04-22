@@ -19,7 +19,7 @@ export const registerService = async(data)=>{
 export const loginService = async(data)=>{
     const {name, password} = data;
 
-    const user = findUserByName(name);
+    const user = await findUserByName(name);
     if(!user){
         throw new Error("Utilisateur introuvable: veuillez vérifier votre nom");
     }
@@ -30,7 +30,7 @@ export const loginService = async(data)=>{
     }
 
     const token = jwt.sign(
-        {id: user.id_user, name: user.username, email: user.email},
+        {id: user.id_users, name: user.username, email: user.email},
         process.env.JWT_SECRET,
         {algorithm: "HS256", expiresIn: "1d"}
     );
@@ -38,7 +38,7 @@ export const loginService = async(data)=>{
     return {
         token,
         user:{
-            id: user.id_user,
+            id: user.id_users,
             name: user.username,
             email: user.email
         }

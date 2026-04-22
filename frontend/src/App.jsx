@@ -5,12 +5,13 @@ import {Home} from './pages/Home';
 import {Profil} from './pages/Profil';
 import {Settings} from './pages/Settings';
 import {ChatbotIA} from './pages/ChatbotIA';
+import {AuthProvider} from './context/AuthContext';
 
 function App() {
 
   return (
-    <>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Routes>
           <Route path="/" element={<Login/>}/>
           <Route path="/Home" element={<Home/>}/>
@@ -18,8 +19,8 @@ function App() {
           <Route path="/Settings" element={<Settings/>}/>
           <Route path="/ChatbotIA" element={<ChatbotIA/>}/>
         </Routes>
-      </Router>
-    </>
+      </AuthProvider>
+    </Router>
   )
 }
 
