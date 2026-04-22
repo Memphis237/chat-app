@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import {Navbar} from '../components/Navbar';
+import { ChatList } from "../components/ChatList";
+import { ChatWindow } from "../components/ChatWindow";
 
 export function Home(){
+    const [chats, setChats] = useState([]);
+    const [selectChat, setSelectChat] = useState(null);
     return <>
-        <section className="flex w-full divide-x">
+        <main className="flex h-screen divide-x">
             <Navbar/>
-            <div className="bg-[#0F172B] w-[500px]"></div>
-            <div className="bg-[#020618] flex-1"></div>
-        </section>
+            <ChatList 
+                chats={chats}
+                setChats={setChats}
+                onSelectChat={setSelectChat}
+                currentChatId={selectChat?.id_groups || selectChat?.id_users}
+            />
+            <ChatWindow/>
+        </main>
     </>
 }
